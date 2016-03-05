@@ -55,7 +55,7 @@ $enable_dkim_signing = 1;    # load DKIM signing code, keys defined by dkim_key
 $unix_socketname = "$MYHOME/amavisd.sock";  # amavisd-release or amavis-milter
                # option(s) -p overrides $inet_socket_port and $unix_socketname
 
-$inet_socket_port = 10024;   # listen on this local TCP port(s)
+$inet_socket_port = <%= @listen_port %>;   # listen on this local TCP port(s)
 # $inet_socket_port = [10024,10026];  # listen on multiple TCP ports
 
 $policy_bank{'MYNETS'} = {   # mail originating from @mynetworks
@@ -152,7 +152,7 @@ $defang_by_ccat{CC_BADH.",6"} = 1;  # header field syntax error
 # $myhostname = 'host.example.com';  # must be a fully-qualified domain name!
 
 # $notify_method  = 'smtp:[127.0.0.1]:10025';
-# $forward_method = 'smtp:[127.0.0.1]:10025';  # set to undef with milter!
+$forward_method = 'smtp:[127.0.0.1]:<%= @forward_port %>';  # set to undef with milter!
 
 # $final_virus_destiny      = D_DISCARD;
 # $final_banned_destiny     = D_DISCARD;
@@ -329,6 +329,7 @@ $banned_filename_re = new_RE(
   ['lrz',  \&do_uncompress,
            ['lrzip -q -k -d -o -', 'lrzcat -q -k'] ],
   ['lzo',  \&do_uncompress, 'lzop -d'],
+  ['lz4',  \&do_uncompress, ['lz4c -d'] ],
   ['rpm',  \&do_uncompress, ['rpm2cpio.pl', 'rpm2cpio'] ],
   [['cpio','tar'], \&do_pax_cpio, ['pax', 'gcpio', 'cpio'] ],
            # ['/usr/local/heirloom/usr/5bin/pax', 'pax', 'gcpio', 'cpio']
@@ -347,7 +348,7 @@ $banned_filename_re = new_RE(
   [['zip','kmz'], \&do_7zip,  ['7za', '7z'] ],
   [['zip','kmz'], \&do_unzip],
   ['7z',   \&do_7zip,  ['7zr', '7za', '7z'] ],
-  [[qw(7z zip gz bz2 Z tar)],
+  [[qw(gz bz2 Z tar)],
            \&do_7zip,  ['7za', '7z'] ],
   [[qw(xz lzma jar cpio arj rar swf lha iso cab deb rpm)],
            \&do_7zip,  '7z' ],
@@ -380,14 +381,14 @@ $banned_filename_re = new_RE(
 
 # ### http://www.clamav.net/
 ['ClamAV-clamd',
-  \&ask_daemon, ["CONTSCAN {}\n", "/tmp/clamd.sock"],
+  \&ask_daemon, ["CONTSCAN {}\n", "/var/run/clamav/clamd.sock"],
   qr/\bOK$/m, qr/\bFOUND$/m,
   qr/^.*?: (?!Infected Archive)(.*) FOUND$/m ],
-# NOTE: run clamd under the same user as amavisd - or run it under its own
-#   uid such as clamav, add user clamav to the amavis group, and then add
-#   AllowSupplementaryGroups to clamd.conf;
-# NOTE: match socket name (LocalSocket) in clamav.conf to the socket name in
-#   this entry; when running chrooted one may prefer a socket under $MYHOME.
+# # NOTE: run clamd under the same user as amavisd - or run it under its own
+# #   uid such as clamav, add user clamav to the amavis group, and then add
+# #   AllowSupplementaryGroups to clamd.conf;
+# # NOTE: match socket name (LocalSocket) in clamav.conf to the socket name in
+# #   this entry; when running chrooted one may prefer a socket under $MYHOME.
 
 # ### http://www.clamav.net/ and CPAN  (memory-hungry! clamd is preferred)
 # # note that Mail::ClamAV requires perl to be build with threading!
