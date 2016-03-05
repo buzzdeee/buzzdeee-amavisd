@@ -39,7 +39,8 @@ class amavisd (
   $mydomain       = $::amavisd::params::mydomain,
   $listen_port    = $::amavisd::params::listen_port,
   $forward_port   = $::amavisd::params::forward_port,
-  $clamav_socket  = $::amavisd::params::clamav_socket,
+  $clamd_host     = $::amavisd::params::clamd_host,
+  $clamd_port     = $::amavisd::params::clamd_port,
   $package_name   = $::amavisd::params::package_name,
   $package_ensure = $::amavisd::params::package_ensure,
   $service_name   = $::amavisd::params::service_name,
@@ -52,10 +53,11 @@ class amavisd (
     package_ensure => $package_ensure,
   }
   class { 'amavisd::config':
-    mydomain      => $mydomain,
-    listen_port   => $listen_port,
-    forward_port  => $forward_port,
-    clamav_socket => $clamav_socket,
+    mydomain     => $mydomain,
+    listen_port  => $listen_port,
+    forward_port => $forward_port,
+    clamd_host   => $clamd_host,
+    clamd_port   => $clamd_port,
   }
   class { 'amavisd::service':
     service_name   => $service_name,

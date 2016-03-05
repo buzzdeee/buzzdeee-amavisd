@@ -2,7 +2,8 @@ class amavisd::config (
   $mydomain,
   $listen_port,
   $forward_port,
-  $clamav_socket,
+  $clamd_host,
+  $clamd_port,
 ) {
   file { '/etc/amavisd.conf':
     owner   => 'root',
