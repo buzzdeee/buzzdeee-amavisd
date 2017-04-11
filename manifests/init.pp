@@ -29,7 +29,7 @@
 #
 # === Authors
 #
-# Author Name <author@domain.com>
+# Sebastian Reitenbach <sebastia@l00-bugdead-prods.de>
 #
 # === Copyright
 #
@@ -65,7 +65,7 @@ class amavisd (
     service_flags  => $service_flags,
   }
 
-  Class['amavisd::install'] ->
-  Class['amavisd::config'] ~>
-  Class['amavisd::service']
+  Class['amavisd::install']
+  -> Class['amavisd::config']
+  ~> Class['amavisd::service']
 }

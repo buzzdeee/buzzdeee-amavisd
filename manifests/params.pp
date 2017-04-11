@@ -1,3 +1,5 @@
+# The default values of parameters
+# of the class
 class amavisd::params {
   $mydomain = 'example.com'
   $listen_port = '10024'

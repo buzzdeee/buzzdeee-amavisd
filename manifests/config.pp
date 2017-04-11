@@ -1,3 +1,5 @@
+# This class takes care
+# to deploy the config file
 class amavisd::config (
   $mydomain,
   $listen_port,
